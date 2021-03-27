@@ -7,11 +7,21 @@ pygame.init()
 ############ 
 
 #############
- 
-display_width = 800
+# golbal variables
+display_width = 800  
 display_height = 600
- 
-black = (0,0,0)
+
+space_width = 103
+space_height = 107
+
+thing_width = 99
+thing_height = 107
+
+#Friction is in space is less
+friction=5
+##############
+#Some colors
+black = (100,100,100)
 white = (255,255,255)
 
 red = (200,0,0)
@@ -25,58 +35,54 @@ desert_color=(255,100,0)
 bright_red = (255,0,0)
 bright_green = (0,255,0)
  
-block_color = (53,115,255)
+score_color = (5,250,255)
  
-space_width = 103
-space_height = 107
 
-thing_width = 99
-thing_height = 100
-#stages background
-"""
-Road=pygame.image.load('road.png')
-Desert=pygame.image.load('Desert.png')
-Snow=pygame.image.load('snow.png')
-"""
+
+
 # Blast image
 blast=pygame.image.load('blast.png')
 
-
+background=pygame.image.load("bk.jpg")
+#stages background
 sky=pygame.image.load('sky.jpg')
 water=pygame.image.load('water1.jpg')
 space=pygame.image.load('space.jpg')
-#default value
+
+# by Defauly Stage is space
 stage=space
-friction=5
- 
-gameDisplay = pygame.display.set_mode((display_width,display_height))
-pygame.display.set_caption('A bit Racey')
-clock = pygame.time.Clock()
- 
+#images of Enemy and SpaceCrafy
+
 spacecraft = pygame.image.load('spacecraft.png')
-
 thing = pygame.image.load('enemy.png')
-
 gameIcon = pygame.image.load('spacecraft.png')
+#default value
 
+ # Set Display height and Width
+gameDisplay = pygame.display.set_mode((display_width,display_height))
+pygame.display.set_caption('Space Racer')
+clock = pygame.time.Clock()
 pygame.display.set_icon(gameIcon)
+
 
 pause = False
 #crash = True
- 
+
+#Score Fuction
 def things_dodged(count):
     font = pygame.font.SysFont("comicsansms", 25)
-    text = font.render("Dodged: "+str(count), True, black)
+    text = font.render("Dodged: "+str(count), True,score_color)
     gameDisplay.blit(text,(0,0))
- 
+#Enemy Function
 def things(thingx, thingy):
     gameDisplay.blit(thing,(thingx, thingy))
- 
+
+#Space Ship Function
 def spaceship(x,y):
     gameDisplay.blit(spacecraft,(x,y))
  
 def text_objects(text, font):
-    textSurface = font.render(text, True, black)
+    textSurface = font.render(text, True, white)
     return textSurface, textSurface.get_rect()
 
 def StageRoad():
@@ -89,12 +95,14 @@ def StageSnow():
     global stage, friction
     stage=space
     friction=5
+
     print("Space.",stage)
 
 def StageDesert():
     global stage,friction
-    friction=0
+    friction=2
     stage=water
+
     print("Water",stage)
  
 def crash():
@@ -117,9 +125,13 @@ def crash():
                 quit()
                 
         
-
+        #Button For Play Again Or Quit
         button("Play Again",150,450,100,50,green,bright_green,game_loop)
         button("Quit",550,450,100,50,red,bright_red,quitgame)
+        # Buttons for Stages
+        button("Space!",345,400,100,30,snow_color,bright_green,StageSnow)
+        button("Sky!",345,450,100,30,grey_color,bright_green,StageRoad)
+        button("Water!",345,500,100,30,desert_color,bright_green,StageDesert)
 
         pygame.display.update()
         clock.tick(15) 
@@ -167,9 +179,10 @@ def paused():
                 pygame.quit()
                 quit()
 
-
+        # Button for Continue or Quit
         button("Continue",150,450,100,50,green,bright_green,unpause)
         button("Quit",550,450,100,50,red,bright_red,quitgame)
+
 
         pygame.display.update()
         clock.tick(15)   
@@ -186,9 +199,10 @@ def game_intro():
                 pygame.quit()
                 quit()
                 
-        gameDisplay.fill(white)
+        #gameDisplay.fill(white)
+        gameDisplay.blit(background,(-150,0))
         largeText = pygame.font.SysFont("comicsansms",100)
-        TextSurf, TextRect = text_objects("A Spacer Racer", largeText)
+        TextSurf, TextRect = text_objects("Space Racer", largeText)
         TextRect.center = ((display_width/2),(display_height/2)-50)
         gameDisplay.blit(TextSurf, TextRect)
 
@@ -199,6 +213,7 @@ def game_intro():
         button("Space!",345,400,100,30,snow_color,bright_green,StageSnow)
         button("Sky!",345,450,100,30,grey_color,bright_green,StageRoad)
         button("Water!",345,500,100,30,desert_color,bright_green,StageDesert)
+        
 
         pygame.display.update()
         clock.tick(15)
@@ -280,7 +295,7 @@ def game_loop():
             thing_speed += 1
             # thing_width += (dodged * 1.2)
  
-        if y < thing_starty+thing_height:
+        if y < thing_starty+thing_height-10:
             print('y crossover')
  
             if x > thing_startx and x < thing_startx + thing_width-3 or x+space_width > thing_startx and x + space_width < thing_startx+thing_width:
